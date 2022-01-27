@@ -124,14 +124,21 @@ def print_amount(num):
     return f'${quot}.{rem:02}'
 
 
+def href(name):
+    '''Wrap a name in a hyperlink.'''
+    return '<a href="https://venmo.com/u/' + name[1:] + '">' + name + '</a>'
+
+
 def print_settlement(settlement, players):
     '''Prints a settlement.'''
+    print('<pre>')
     for player_id in sorted(settlement, key=lambda player_id: players[player_id][0].lower()):
         name, cashout = players[player_id]
-        print(f'{name} requests {print_amount(cashout)} from:')
+        print(f'{href(name)} requests {print_amount(cashout)} from:')
         for payer in sorted(settlement[player_id], key=lambda p: (-p[1], players[p[0]][0].lower())):
-            print(f'\t{print_amount(payer[1]):>8} {players[payer[0]][0]}')
+            print(f'\t{print_amount(payer[1]):>8} {href(players[payer[0]][0])}')
         print()
+    print('</pre>')
 
 
 def main():
