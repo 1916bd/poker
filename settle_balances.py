@@ -50,7 +50,8 @@ def find_settlement_or(cashouts, _):
             if cashout2 >= 0:
                 continue
             cap = min(cashout1, -cashout2)
-            min_cost_flow.AddArcWithCapacityAndUnitCost(player_from, player_to, cap, edge_weight())
+            min_cost_flow.AddArcWithCapacityAndUnitCost(
+                player_from, player_to, cap, edge_weight())
 
     for player_id, cashout in enumerate(cashouts):
         min_cost_flow.SetNodeSupply(player_id, cashout)
@@ -62,7 +63,8 @@ def find_settlement_or(cashouts, _):
     for i in range(min_cost_flow.NumArcs()):
         if min_cost_flow.Flow(i) <= 0:
             continue
-        settlements[min_cost_flow.Tail(i)].append((min_cost_flow.Head(i), min_cost_flow.Flow(i)))
+        settlements[min_cost_flow.Tail(i)].append(
+            (min_cost_flow.Head(i), min_cost_flow.Flow(i)))
 
     return settlements
 
@@ -124,9 +126,13 @@ def print_amount(num):
     return f'${quot}.{rem:02}'
 
 
-def href(name):
+def href(name, num=None):
     '''Wrap a name in a hyperlink.'''
-    return '<a href="https://venmo.com/u/' + name[1:] + '">' + name + '</a>'
+    if num:
+        quot, rem = divmod(num, 100)
+        return f'<a href="https://venmo.com/?txn=charge&audience=private&recipients={name[1:]}&amount={quot}.{rem:02}">' + name + '<a>'
+    else:
+        return '<a href="https://venmo.com/u/' + name[1:] + '">' + name + '</a>'
 
 
 def print_settlement(settlement, players):
@@ -136,7 +142,8 @@ def print_settlement(settlement, players):
         name, cashout = players[player_id]
         print(f'{href(name)} requests {print_amount(cashout)} from:')
         for payer in sorted(settlement[player_id], key=lambda p: (-p[1], players[p[0]][0].lower())):
-            print(f'\t{print_amount(payer[1]):>8} {href(players[payer[0]][0])}')
+            print(
+                f'\t{print_amount(payer[1]):>8} {href(players[payer[0]][0], payer[1])}')
         print()
     print('</pre>')
 
